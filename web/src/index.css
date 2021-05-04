@@ -1,0 +1,31 @@
+*, *::before, *::after{
+box-sizing: border-box;
+}
+body{
+  margin:0;
+  background-color: #f3f3f3;;;
+}
+
+.quill.container .ql-editor{
+height: 11in;
+width: 8.5in;
+padding: 1in;
+margin:1rem;
+box-shadow: 0 0 5px 0 rgba(0,0,0, .5);
+background-color: white;
+}
+.quill.container .ql-container{
+  border: none;
+  display: flex;
+  justify-content: center;
+}
+.quill.container div.ql-toolbar{
+  display: flex;
+  justify-content: center;
+  position:sticky;
+  top:0;
+  z-index: 10;
+  background-color: #f3f3f3;
+  border:none;
+  box-shadow: 0 0 5px 0 rgba(0,0,0, .5);
+}

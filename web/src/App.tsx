@@ -1,10 +1,11 @@
 import { TextEditor } from "./components/TextEditor";
-import {Quill as ql} from 'quill'
-import * as ReactQuill from 'react-quill'
+
 import "quill/dist/quill.snow.css"
 function App() {
   return (
-   <TextEditor/>
+    <div className="container">
+      <TextEditor />
+     </div>
   );
 }
 
