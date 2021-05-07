@@ -2,6 +2,7 @@
 import {Server} from "socket.io";
 
 
+
 const io = new Server(3001,{
   cors:{
     "origin": "http://localhost:3000",
@@ -13,4 +14,14 @@ const io = new Server(3001,{
 io.on("connection",(socket)=>{
   socket.emit("hello", "world");
   console.log(socket.id)
+
+
+
+socket.on("changes",(delta: Object)=>{
+  io.emit("hello", "typing...");
+  console.log(delta)
+})
+
+
+
 })

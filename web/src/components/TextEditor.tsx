@@ -1,11 +1,13 @@
-import React, { RefObject, useRef, useEffect } from 'react'
-import ReactQuill, { Quill} from 'react-quill';
+
+import { TextChangeHandler } from 'quill';
+import React, { useEffect, useRef } from 'react';
+import {  default as ReactQuill, Quill } from 'react-quill';
 import { io } from "socket.io-client";
 
 // interface TextEditorProps {
 
 // }
-const socket = io("http://localhost:3001");
+const socket = io("http://localhost:3001",{reconnectionAttempts:12});
 
 
 
@@ -32,17 +34,26 @@ const modules = {
 }
 
 export const TextEditor = () => {
-  let q = useRef() as React.MutableRefObject<Quill>
+  let quillRef = useRef() as React.MutableRefObject<Quill>
   const quill = useRef() as React.MutableRefObject<ReactQuill>
+
+
   useEffect(() => {
-    let quillRef = quill.current.getEditor();
     console.log(quillRef)
-    q.current = quill.current.getEditor();
-    if(q.current){
-      q.current.setText("hi")
+    quillRef.current = quill.current.getEditor();
+
+    function handler<TextChangeHandler>(arg:TextChangeHandler) {
+      if (source !== 'user') {
+        return;
+      }
+      socket.emit("changes",arg.delta)
+      
     }
-  },[] )
-    console.log(q)
+    quillRef.current.on('text-change', handler );
+    return() =>{quillRef.current.off("text-change", handler )}
+    
+  },[])
+    console.log(quillRef)
     
     return (<>
       <ReactQuill ref={quill} theme="snow" className="container" modules={modules}/>
