@@ -1,25 +1,9 @@
 
-import  Sources from 'quill';
-import DeltaStatic from 'react-quill';
-import TextChangeHandler from 'index.d.ts'
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {  default as ReactQuill, Quill } from 'react-quill';
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 
-// interface TextEditorProps {
-
-// }
-const socket = io("http://localhost:3001",{reconnectionAttempts:12});
-
-
-
-socket.on("connect", () => {
-  console.log(socket.connected); // true
-});
-socket.on("hello", (arg) => {
-  console.log(arg); // world
-});
-
+// interface TextEditorProps { }
 
 const modules = {
   toolbar: [
@@ -36,37 +20,53 @@ const modules = {
 }
 
 export const TextEditor = () => {
+  const [socket , setSocket] = useState<Socket>();
+  const [quill, setQuill] = useState<Quill>();
+
   let quillRef = useRef() as React.MutableRefObject<Quill>
-  const quill = useRef() as React.MutableRefObject<ReactQuill>
+  const quills = useRef() as React.MutableRefObject<ReactQuill>
+  
+  useEffect(()=>{
+    const sckt = io("http://localhost:3001",{reconnectionAttempts:12});
+    setSocket(sckt)
+    return()=>{
+      sckt.disconnect();
+    }
+  },[])
+
+  useEffect(()=>{
+    quillRef.current = quills.current.getEditor();
+    console.log(quillRef.current)
+    setQuill(quillRef.current)
+  },[])
 
 
   useEffect(() => {
-    console.log(quillRef)
-    quillRef.current = quill.current.getEditor();
+  if(socket == null || quill == null) return;
 
-   const handler: TextChangeHandler = (delta: DeltaStatic, oldDelta: DeltaStatic, source:Sources)=>{
+    
+    quill.on('text-change', function handler(delta, oldDelta, source){
       if (source !== 'user') {
         return;
       }
       socket.emit("changes",delta)
-    }
+    });
+    //return() =>{quillRef.current.off("text-change", handler )}
+  },[quill, socket])
+
+  useEffect(() => {
+    if(socket == null || quill == null) return;
+
+    socket.on('recieve-changes', (delta)=>{
+      quill.updateContents(delta);
+    });
+    //return() =>{quillRef.current.off("text-change", handler )}
+  },[quill, socket])
 
 
-   
-    quillRef.current.on('text-change', handler);
-    
-    return() =>{quillRef.current.off("text-change", handler )}
-    
-  },[])
-    console.log(quillRef)
-    
-    return (<>
-      <ReactQuill ref={quill} theme="snow" className="container" modules={modules}/>
-      
+    return (
+      <>
+        <ReactQuill ref={quills} theme="snow" className="container" modules={modules}/>
       </>
     );
-}
-
-function handler(arg0: string, handler: any) {
-  throw new Error('Function not implemented.');
 }
