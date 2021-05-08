@@ -1,5 +1,7 @@
 
-import { TextChangeHandler } from 'quill';
+import  Sources from 'quill';
+import DeltaStatic from 'react-quill';
+import TextChangeHandler from 'index.d.ts'
 import React, { useEffect, useRef } from 'react';
 import {  default as ReactQuill, Quill } from 'react-quill';
 import { io } from "socket.io-client";
@@ -42,14 +44,17 @@ export const TextEditor = () => {
     console.log(quillRef)
     quillRef.current = quill.current.getEditor();
 
-    function handler<TextChangeHandler>(arg:TextChangeHandler) {
+   const handler: TextChangeHandler = (delta: DeltaStatic, oldDelta: DeltaStatic, source:Sources)=>{
       if (source !== 'user') {
         return;
       }
-      socket.emit("changes",arg.delta)
-      
+      socket.emit("changes",delta)
     }
-    quillRef.current.on('text-change', handler );
+
+
+   
+    quillRef.current.on('text-change', handler);
+    
     return() =>{quillRef.current.off("text-change", handler )}
     
   },[])
@@ -60,4 +65,8 @@ export const TextEditor = () => {
       
       </>
     );
+}
+
+function handler(arg0: string, handler: any) {
+  throw new Error('Function not implemented.');
 }
