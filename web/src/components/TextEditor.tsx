@@ -2,9 +2,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {  default as ReactQuill, Quill } from 'react-quill';
 import { io, Socket } from "socket.io-client";
+import {useParams} from 'react-router-dom'
 
 // interface TextEditorProps { }
-
+interface DocRouteParams{
+  id: string;
+}
 const modules = {
   toolbar: [
     [{ 'header': [1,2,3,4,5,6, false] }],
@@ -20,6 +23,7 @@ const modules = {
 }
 
 export const TextEditor = () => {
+  const { id: documentId } = useParams<DocRouteParams>();
   const [socket , setSocket] = useState<Socket>();
   const [quill, setQuill] = useState<Quill>();
 
@@ -37,11 +41,23 @@ export const TextEditor = () => {
   useEffect(()=>{
     quillRef.current = quills.current.getEditor();
     console.log(quillRef.current)
+    if(quillRef.current){
+      quillRef.current.disable()
+      quillRef.current.setText("Loading...")
+    }
     setQuill(quillRef.current)
+   
   },[])
 
 
-  
+  useEffect(() => {
+    if(socket == null || quill == null) return;
+    socket.once('load-document', document =>{
+      quill.setContents(document)
+      quill.enable()
+    })
+    socket.emit('get-document', documentId)
+  }, [quill,socket, documentId])
 
 
   useEffect(() => {

@@ -15,11 +15,15 @@ const io = new Server(3001,{
 io.on("connection",(socket)=>{
   console.log("connected")
 
-socket.on("changes",(delta)=>{
-  socket.broadcast.emit("recieve-changes",delta)
-  console.log(delta)
+
+socket.on("get-document", documentId => {
+  const data = '';
+  socket.join(documentId);
+  socket.emit('load-document', data);
+
+  socket.on("changes",(delta)=>{
+    socket.broadcast.to(documentId).emit("recieve-changes",delta)
+    console.log(delta)
+  })
 })
-
-
-
 })
