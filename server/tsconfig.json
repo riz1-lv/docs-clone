@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "es6",
     "module": "commonjs",
+    "typeRoots": ["./node_modules/@types/", "./src/@types"],
     "lib": [
       "dom",
       "es6",
@@ -9,6 +10,7 @@
       "esnext.asynciterable"
     ],
     "sourceMap": true,
+    "allowJs": true,
     "outDir": "./dist",
     "moduleResolution": "node",
     "removeComments": true,
@@ -33,5 +35,5 @@
   "include": [
     "./src/**/*.tsx",
     "./src/**/*.ts"
-  ]
+, "src/Schema/Document.js"  ]
 }
