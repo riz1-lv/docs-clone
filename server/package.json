@@ -4,7 +4,9 @@
   "description": "",
   "main": "server.js",
   "dependencies": {
+    "@types/mongoose": "^5.10.5",
     "@types/socket.io": "^2.1.13",
+    "mongoose": "^5.12.9",
     "socket.io": "^4.0.1"
   },
   "devDependencies": {
