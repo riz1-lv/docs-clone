@@ -36,6 +36,9 @@ socket.on("get-document", async documentId => {
     socket.broadcast.to(documentId).emit("recieve-changes",delta)
     console.log(delta)
   })
+  socket.on("save-document", async data =>{
+    await Document.findByIdAndUpdate(documentId, {data})
+  })
  })
 })
 

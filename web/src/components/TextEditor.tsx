@@ -8,6 +8,7 @@ import {useParams} from 'react-router-dom'
 interface DocRouteParams{
   id: string;
 }
+const SAVE_INTERVAL = 20000;
 const modules = {
   toolbar: [
     [{ 'header': [1,2,3,4,5,6, false] }],
@@ -59,6 +60,14 @@ export const TextEditor = () => {
     socket.emit('get-document', documentId)
   }, [quill,socket, documentId])
 
+  useEffect(() => {
+    if(socket == null || quill == null) return;
+      const interval = setInterval(()=>{
+      socket.emit("save-document", quill.getContents())
+      }, SAVE_INTERVAL)
+      return () =>{clearInterval(interval)}
+  }, [socket,quill])
+
 
   useEffect(() => {
   if(socket == null || quill == null) return;
@@ -72,7 +81,7 @@ export const TextEditor = () => {
     });
     //return() =>{quillRef.current.off("text-change", handler )}
   },[quill, socket])
-
+    
   useEffect(() => {
     if(socket == null || quill == null) return;
 
