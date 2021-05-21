@@ -1,11 +1,12 @@
 
+require('dotenv').config()
 import {Server} from "socket.io";
 import mongoose from 'mongoose';
 import Document from './Schema/Document.js'
 
 
 
- mongoose.connect('mongodb://localhost/docs', {
+ mongoose.connect(process.env.MONGODB_URI ||'mongodb://localhost/docs', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useFindAndModify: false,
